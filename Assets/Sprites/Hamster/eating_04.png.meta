@@ -1,7 +1,10 @@
 fileFormatVersion: 2
-guid: 0990f2da706dfb741b2fd54992f1c5c7
+guid: 231c3bce3ebe19541a2ea9a8a4f8c000
 TextureImporter:
-  internalIDToNameTable: []
+  internalIDToNameTable:
+  - first:
+      213: 490813570231435566
+    second: eating_04_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -108,7 +111,29 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: eating_04_0
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 3
+        width: 134
+        height: 157
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2106987758bfc600800000000000000
+      internalID: 490813570231435566
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -122,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      eating_04_0: 490813570231435566
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

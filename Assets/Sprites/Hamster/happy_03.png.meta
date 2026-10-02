@@ -1,7 +1,16 @@
 fileFormatVersion: 2
-guid: c8d7e1273c60b5047a82d1dec8f658ad
+guid: d55501200d398044ca0fc4a7ac714f8e
 TextureImporter:
-  internalIDToNameTable: []
+  internalIDToNameTable:
+  - first:
+      213: 2070509914879469915
+    second: happy_03_0
+  - first:
+      213: 4147818084889571432
+    second: happy_03_1
+  - first:
+      213: 5671362213478584806
+    second: happy_03_2
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -108,7 +117,73 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: happy_03_0
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 137
+        width: 28
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b59a05c2ccdebbc10800000000000000
+      internalID: 2070509914879469915
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: happy_03_1
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 3
+        width: 189
+        height: 158
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 860b8c67292009930800000000000000
+      internalID: 4147818084889571432
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: happy_03_2
+      rect:
+        serializedVersion: 2
+        x: 28
+        y: 150
+        width: 24
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e1d6fe82e9b4be40800000000000000
+      internalID: 5671362213478584806
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -122,7 +197,10 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      happy_03_0: 2070509914879469915
+      happy_03_1: 4147818084889571432
+      happy_03_2: 5671362213478584806
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

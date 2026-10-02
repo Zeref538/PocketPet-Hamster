@@ -12,7 +12,7 @@ public static class PetBuilder
 {
     const string Frames = "Assets/Sprites/Hamster";
     const string AnimDir = "Assets/Animations/Hamster";
-    const string ScenePath = "Assets/Scenes/Hamster.unity";
+    const string ScenePath = "Assets/Scenes/SampleScene.unity";
 
     // Order = the "Mood" number each animation answers to.
     // Frames per second: calm moods slower, lively ones faster.
@@ -99,26 +99,137 @@ public static class PetBuilder
         return clip;
     }
 
+    const string Rooms = "Assets/Sprites/Rooms";
+    const string UI = "Assets/Sprites/UI";
+
+    // The three buttons: UI picture name -> Mood it plays.
+    static readonly (string button, int mood)[] Buttons =
+    {
+        ("food", 4),    // eating
+        ("love", 1),    // happy
+        ("play", 5),    // playing
+    };
+
+    // Uses the Universal 2D template's own SampleScene (Main Camera and
+    // Global Light 2D already in it, same as Shadow) and adds the room,
+    // the hamster and three buttons.
     static void MakeScene(AnimatorController controller)
     {
-        var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+        SpriteImports(Rooms, FilterMode.Point);       // pixel art: keep it sharp
+        SpriteImports(UI, FilterMode.Point);          // small pixel icons: keep them sharp when enlarged
 
-        var cam = new GameObject("Main Camera").AddComponent<Camera>();
-        cam.tag = "MainCamera";
-        cam.orthographic = true;
-        cam.orthographicSize = 1.4f;
-        cam.clearFlags = CameraClearFlags.SolidColor;
-        cam.backgroundColor = new Color32(255, 228, 236, 255);   // soft pink
-        cam.transform.position = new Vector3(0f, 0f, -10f);
+        var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+        foreach (var name in new[] { "Hamster", "Pup", "Background", "Canvas", "EventSystem" })
+        {
+            var old = GameObject.Find(name);
+            if (old != null) Object.DestroyImmediate(old);
+        }
 
+        var lit = AssetDatabase.LoadAssetAtPath<Material>(
+            "Packages/com.unity.render-pipelines.universal/Runtime/Materials/Sprite-Lit-Default.mat");
+
+        // Background: the day room, scaled to cover a 16:9 view of the
+        // template camera (10 units tall) and lined up with the bottom of the
+        // screen, so the rug stays in view. Drawn behind everything.
+        var cam = Camera.main;
+        var bg = new GameObject("Background");
+        var bgr = bg.AddComponent<SpriteRenderer>();
+        bgr.sprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{Rooms}/room_day.png");
+        bgr.sortingOrder = -10;
+        if (lit != null) bgr.sharedMaterial = lit;
+        float viewH = cam.orthographicSize * 2f, viewW = viewH * 16f / 9f;
+        var size = bgr.sprite.bounds.size;
+        float scale = Mathf.Max(viewH / size.y, viewW / size.x);
+        bg.transform.localScale = Vector3.one * scale;
+        bg.transform.position = new Vector3(0f, -cam.orthographicSize + size.y * scale / 2f, 0f);
+
+        // Hamster: standing on the rug.
         var pet = new GameObject("Hamster");
-        pet.transform.position = new Vector3(0f, -0.9f, 0f);
+        pet.transform.localScale = Vector3.one * 2.2f;
+        pet.transform.position = new Vector3(0f, -3.4f, 0f);
         var sr = pet.AddComponent<SpriteRenderer>();
         sr.sprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{Frames}/idle_01.png");
-        pet.AddComponent<Animator>().runtimeAnimatorController = controller;
-        pet.AddComponent<PetDemo>();
+        if (lit != null) sr.sharedMaterial = lit;     // lit by the Global Light 2D
+        var animator = pet.AddComponent<Animator>();
+        animator.runtimeAnimatorController = controller;
+
+        MakeButtons(animator);
 
         EditorSceneManager.SaveScene(scene, ScenePath);
         EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(ScenePath, true) };
+    }
+
+    static void MakeButtons(Animator animator)
+    {
+        // Canvas = the layer UI is drawn on, on top of the game. The scaler
+        // keeps buttons the same size on any screen (designed for 1920x1080).
+        var canvasGo = new GameObject("Canvas");
+        var canvas = canvasGo.AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        var scaler = canvasGo.AddComponent<UnityEngine.UI.CanvasScaler>();
+        scaler.uiScaleMode = UnityEngine.UI.CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1920, 1080);
+        scaler.matchWidthOrHeight = 0.5f;
+        canvasGo.AddComponent<UnityEngine.UI.GraphicRaycaster>();
+        var actions = canvasGo.AddComponent<PetButtons>();
+        actions.pet = animator;
+
+        // EventSystem = what turns mouse clicks and taps into button presses.
+        // This project uses the Input System, so it needs its UI module.
+        var events = new GameObject("EventSystem");
+        events.AddComponent<UnityEngine.EventSystems.EventSystem>();
+        events.AddComponent<UnityEngine.InputSystem.UI.InputSystemUIInputModule>();
+
+        // Three buttons stacked down the right side of the screen.
+        for (int i = 0; i < Buttons.Length; i++)
+        {
+            var (name, mood) = Buttons[i];
+            var normal = AssetDatabase.LoadAssetAtPath<Sprite>($"{UI}/button_{name}.png");
+            var pressed = AssetDatabase.LoadAssetAtPath<Sprite>($"{UI}/button_{name}_pressed.png");
+
+            var go = new GameObject($"Button {name}", typeof(RectTransform));
+            go.transform.SetParent(canvasGo.transform, false);
+            var rect = (RectTransform)go.transform;
+            rect.anchorMin = rect.anchorMax = new Vector2(1f, 0.5f);   // right edge, middle
+            rect.pivot = new Vector2(1f, 0.5f);
+            rect.sizeDelta = new Vector2(200f, 200f);
+            rect.anchoredPosition = new Vector2(-60f, 240f - i * 240f);
+
+            var image = go.AddComponent<UnityEngine.UI.Image>();
+            image.sprite = normal;
+            image.preserveAspect = true;
+
+            var button = go.AddComponent<UnityEngine.UI.Button>();
+            button.targetGraphic = image;
+            if (pressed != null)
+            {
+                button.transition = UnityEngine.UI.Selectable.Transition.SpriteSwap;
+                button.spriteState = new UnityEngine.UI.SpriteState { pressedSprite = pressed };
+            }
+            else
+            {
+                // No pressed picture: darken the button while it's held.
+                button.transition = UnityEngine.UI.Selectable.Transition.ColorTint;
+                var colors = button.colors;
+                colors.pressedColor = new Color(0.75f, 0.75f, 0.75f);
+                button.colors = colors;
+            }
+            // Saved in the scene, so the button works with no setup in Play.
+            UnityEditor.Events.UnityEventTools.AddIntPersistentListener(button.onClick, actions.Play, mood);
+        }
+    }
+
+    static void SpriteImports(string folder, FilterMode filter)
+    {
+        foreach (var path in Directory.GetFiles(folder, "*.png"))
+        {
+            var imp = (TextureImporter)AssetImporter.GetAtPath(path.Replace(Path.DirectorySeparatorChar, '/'));
+            imp.textureType = TextureImporterType.Sprite;
+            imp.spriteImportMode = SpriteImportMode.Single;
+            imp.filterMode = filter;
+            imp.textureCompression = TextureImporterCompression.Uncompressed;
+            imp.mipmapEnabled = false;
+            imp.SaveAndReimport();
+        }
     }
 }

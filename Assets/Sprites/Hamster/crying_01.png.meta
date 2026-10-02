@@ -1,7 +1,13 @@
 fileFormatVersion: 2
-guid: 4f9edf3f4ce52da4f8fd229a866a7d1f
+guid: 8377cf221354bc246bca16f2095ee127
 TextureImporter:
-  internalIDToNameTable: []
+  internalIDToNameTable:
+  - first:
+      213: 8206833884746537575
+    second: crying_01_0
+  - first:
+      213: -262063979949463027
+    second: crying_01_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -108,7 +114,51 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: crying_01_0
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 3
+        width: 164
+        height: 155
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76ad4febfe784e170800000000000000
+      internalID: 8206833884746537575
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: crying_01_1
+      rect:
+        serializedVersion: 2
+        x: 181
+        y: 83
+        width: 27
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0aefaed236fc5cf0800000000000000
+      internalID: -262063979949463027
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -122,7 +172,9 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      crying_01_0: 8206833884746537575
+      crying_01_1: -262063979949463027
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
