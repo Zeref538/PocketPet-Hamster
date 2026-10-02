@@ -119,7 +119,7 @@ public static class PetBuilder
         SpriteImports(UI, FilterMode.Point);          // small pixel icons: keep them sharp when enlarged
 
         var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
-        foreach (var name in new[] { "Hamster", "Pup", "Background", "Canvas", "EventSystem" })
+        foreach (var name in new[] { "Hamster", "Pup", "Background", "Canvas", "EventSystem", "AudioManager" })
         {
             var old = GameObject.Find(name);
             if (old != null) Object.DestroyImmediate(old);
@@ -153,13 +153,22 @@ public static class PetBuilder
         var animator = pet.AddComponent<Animator>();
         animator.runtimeAnimatorController = controller;
 
-        MakeButtons(animator);
+        // AudioManager (the supplied script) holds one Sound per button.
+        // Each Sound's name matches its button, so Play("food") finds it.
+        var audio = new GameObject("AudioManager").AddComponent<AudioManager>();
+        audio.sounds = Buttons.Select(b => new Sound
+        {
+            name = b.button,
+            clip = AssetDatabase.LoadAssetAtPath<AudioClip>($"Assets/Audio/{b.button}.wav"),
+        }).ToArray();
+
+        MakeButtons(animator, audio);
 
         EditorSceneManager.SaveScene(scene, ScenePath);
         EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(ScenePath, true) };
     }
 
-    static void MakeButtons(Animator animator)
+    static void MakeButtons(Animator animator, AudioManager audio)
     {
         // Canvas = the layer UI is drawn on, on top of the game. The scaler
         // keeps buttons the same size on any screen (designed for 1920x1080).
@@ -216,6 +225,8 @@ public static class PetBuilder
             }
             // Saved in the scene, so the button works with no setup in Play.
             UnityEditor.Events.UnityEventTools.AddIntPersistentListener(button.onClick, actions.Play, mood);
+            // Second action on the same click: play this button's sound effect.
+            UnityEditor.Events.UnityEventTools.AddStringPersistentListener(button.onClick, audio.Play, name);
         }
     }
 
